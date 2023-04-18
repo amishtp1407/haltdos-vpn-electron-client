@@ -1,0 +1,19 @@
+{
+  "name": "haltdos-vpn-client",
+  "version": "1.0.0",
+  "description": "Haltdos VPN Client",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Haltdos",
+  "license": "ISC",
+  "devDependencies": {
+    "electron": "^24.1.2"
+  },
+  "dependencies": {
+    "jquery": "^3.6.4",
+    "sudo-prompt": "^9.2.1"
+  }
+}
