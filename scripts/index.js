@@ -2,7 +2,6 @@ var VPN = function() {
     var config = null;
     var updateConnectionStatus = async function() {
         let respone = await window.ipcRender.invoke('status');
-        console.log(respone.status);
         if (respone.status == true) {
             $("#status").removeClass("bg-danger");
             $("#status").addClass("bg-success");
@@ -19,23 +18,15 @@ var VPN = function() {
             $('form :input').prop('disabled', false);
         }
     };
-    var loadConfig = function(config) {
-        if (_.isEmpty(config) == true) {
-            return;
-        }
-        $("#username").val(config.username);
-        $("#password").val(config.password);
-        $("#server").val(config.server);
-    };
     return {
         init: function() {
             updateConnectionStatus();
-            setInterval(function() {
-                updateConnectionStatus();
-            }, 3000);
-            loadConfig(config);
+            // setInterval(function() {
+            //     updateConnectionStatus();
+            // }, 3000);
+            //loadConfig(config);
         },
-        connect: function() {
+        connect: async function() {
             try {
                 Validations.notEmpty($("#username"));
                 Validations.notEmpty($("#password"));
@@ -51,8 +42,11 @@ var VPN = function() {
                 "toSave": $("#saveConfig").prop("checked")
             }
             console.log(config);
-            window.ipcRender.send('connect', config);
-            updateConnectionStatus();
+            let response = await window.ipcRender.invoke('connect', config);
+            console.log("Config: " + response);
+            if (response.status == true){
+                updateConnectionStatus();
+            }
         },
         disconnect: function() {
             window.ipcRender.send('disconnect');
