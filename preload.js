@@ -3,10 +3,10 @@ const ipcRenderer = require('electron').ipcRenderer;
 const ipc = {
     'render': {
         'send': [
-            'connect', 
             'disconnect'
         ],
         'sendReceive': [
+            'connect',
             'status'
         ]
     }

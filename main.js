@@ -22,12 +22,11 @@ const loadMainWindow = () => {
         }
     });
     mainWindow.loadFile(path.join(__dirname, "index.html"));
+    app.setAppUserModelId(process.execPath)
 }
 
 const contextMenu = Menu.buildFromTemplate([
     { label: 'Show', type: 'normal', click: function(){mainWindow.show()} },
-    { label: 'Connect', type: 'normal', click: function(){}},
-    { label: 'Disconnect', type: 'normal', click: function(){} },
     { label: 'Quit', type: 'normal', click: function(){app.quit()}},
 ])
 
@@ -66,35 +65,39 @@ app.on("activate", () => {
     }
 });
 
-ipcMain.on('connect', (event, data) => {
+ipcMain.handle('connect', async (event, config) => {
     let vpn;
+    let data = {};
+    data.status = false;
 
     if (platform === 'darwin') {
-        vpn = spawn('openconnect', [data.server,'-b', '-u', data.username]);
+        vpn = spawn('openconnect', [config.server,'-b', '-u', config.username]);
     } else if (platform === 'win32') {
-        vpn = spawn('openconnect', [data.server, '-u', data.username]);
+        vpn = spawn("openconnect", [config.server, '-u', config.username]);
     } else if (platform === 'linux') {
-        vpn = spawn('openconnect', [data.server,'-b', '-u', data.username]);
+        vpn = spawn('openconnect', [config.server, '-b', '-u', config.username]);
     }
 
     vpn.stdout.on('data', (output) => {
         console.log('stdout: ' + output);
-        if (output.includes("servercert") == true){
-            vpn.stdin.write('yes\n');
-            vpn.stdin.write(data.password);
-            vpn.stdin.end();
-        } else {
-            vpn.stdin.write(data.password);
-            vpn.stdin.end();
-        }
     });
 
-    vpn.stderr.on('data', (err) => {
+    vpn.stdin.write('yes\n');
+    vpn.stdin.write(data.password);
+    vpn.stdin.end();
+
+    vpn.on('error', (err) => {
         console.log('stderr: ' + err);
     });
 
-    vpn.on('exit', (code) => {
-        console.log('Exit Code: ' + code);
+    return new Promise((resolve, reject) => {
+        vpn.on('exit', (code) => {
+            if (code == 0) {
+                console.log(code)
+                data.status = true;
+                resolve(data);
+              }
+          });
     });
 })
 
@@ -140,18 +143,28 @@ ipcMain.handle('status', async () => {
         vpn = spawn('pidof', ['openconnect']);
     }
 
-    vpn.stderr.on('data', (err) => {
-        data.error = err;
-        console.log('stderr: ' + err);
+    const stderr = [];
+    vpn.stderr.on('data', (data) => {
+        stderr.push(data);
     });
 
     return new Promise((resolve, reject) => {
         vpn.on('exit', (code) => {
-          if (code == 0) {
-            data.status = true;
-          }
-          resolve(data);
-        });
+            if (code == 0) {
+              if (stderr.length > 0) { // check for errors on stderr stream
+                resolve(data);
+              } else {
+                data.status = true;
+                resolve(data);
+              }
+            } else {
+                resolve(data);
+            }
+          });
+          vpn.on('error', (err) => {
+            console.error('Error:', err);
+            reject(err);
+          });
     });
 });
 
