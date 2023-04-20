@@ -21,10 +21,10 @@ var VPN = function() {
     return {
         init: function() {
             updateConnectionStatus();
-            // setInterval(function() {
-            //     updateConnectionStatus();
-            // }, 3000);
-            //loadConfig(config);
+            setInterval(function() {
+                updateConnectionStatus();
+            }, 3000);
+            loadConfig(config);
         },
         connect: async function() {
             try {
