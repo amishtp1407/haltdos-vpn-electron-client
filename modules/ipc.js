@@ -1,4 +1,4 @@
-// All IPC Channel Functions
+// IPC Channel Listeners and Handlers
 
 const fs = require('fs');
 const os = require('os');

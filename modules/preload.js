@@ -15,7 +15,7 @@ const ipc = {
     }
 };
 
-//Exposing Channels for renderer process
+//Exposing IPC Channels for renderer process to access
 contextBridge.exposeInMainWorld('ipcRender', {
     send: (channel, args) => {
         let validChannels = ipc.render.send;
