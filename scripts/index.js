@@ -18,13 +18,24 @@ var VPN = function() {
             $('form :input').prop('disabled', false);
         }
     };
+
+    var loadConfig = async function() {
+        config = await window.ipcRender.invoke('fetch');
+        if(config.response == true){
+            $("#username").val(config.username);
+            $("#password").val(config.password);
+            $("#server").val(config.server);
+            $('#saveConfig').prop('checked', config.toSave);
+        }
+    };
+
     return {
         init: function() {
             updateConnectionStatus();
+            loadConfig();
             setInterval(function() {
                 updateConnectionStatus();
             }, 3000);
-            loadConfig(config);
         },
         connect: async function() {
             try {
@@ -41,9 +52,7 @@ var VPN = function() {
                 "server": PlatformUtils.getTrimmedValue("server"),
                 "toSave": $("#saveConfig").prop("checked")
             }
-            console.log(config);
             let response = await window.ipcRender.invoke('connect', config);
-            console.log("Config: " + response);
             if (response.status == true){
                 updateConnectionStatus();
             }
