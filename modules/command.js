@@ -1,12 +1,13 @@
 const os = require('os');
+const fs = require('fs');
 const sudo = require('sudo-prompt');
 const { spawn } = require('child_process');
+const { encryptAndSaveFormData, encryptedFilePath } = require('./security');
 
 const platform = os.platform();
 const options = { name: 'Haltdos VPN Client' }
 
-const kill = () => {
-    let vpn;
+function kill() {
     if (platform === 'darwin' || platform === 'linux') {
         sudo.exec('pkill -9 openconnect', options, function(){});
     } else if (platform === 'win32') {
@@ -14,7 +15,7 @@ const kill = () => {
     }
 }
 
-const fetchInterfaces = () => {
+function fetchInterfaces() {
     let data = {};
     data.status = false;
     const interfaces = os.networkInterfaces();
@@ -40,7 +41,18 @@ const fetchInterfaces = () => {
     }
 }
 
+function saveConfig() {
+    if(config.toSave == true){
+        encryptAndSaveFormData(config);
+    } else {
+        if (fs.existsSync(encryptedFilePath)) {
+            fs.unlink(encryptedFilePath, (err) => {});
+        }
+    }
+}
+
 module.exports = {
     kill,
-    fetchInterfaces
+    fetchInterfaces,
+    saveConfig
 };

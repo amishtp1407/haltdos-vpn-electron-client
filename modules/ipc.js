@@ -1,11 +1,10 @@
 // IPC Channel Listeners and Handlers
 
-const fs = require('fs');
 const os = require('os');
 const sudo = require('sudo-prompt');
 const { ipcMain } = require('electron');
-const { encryptAndSaveFormData, readAndDecryptFormData, encryptedFilePath } = require('./security');
-const { fetchInterfaces, kill } = require('./command');
+const { readAndDecryptFormData } = require('./security');
+const { fetchInterfaces, kill, saveConfig } = require('./command');
 
 const platform = os.platform();
 const options = { name: 'Haltdos VPN Client' }
@@ -15,14 +14,7 @@ function connectionListener(){
         let data = {};
         data.status = false;
         if (platform === 'darwin' || platform === 'linux') {
-            let cmd = `/bin/sh -c "echo ${config.password} | openconnect ${config.server} -b -u ${config.username} --passwd-on-stdin --servercert pin-sha256:57d5jlbUX25YnrMZ0wloogprAPUijLoy2C+zUW+5iuo="`;
-            if(config.toSave == true){
-                encryptAndSaveFormData(config);
-            } else {
-                if (fs.existsSync(encryptedFilePath)) {
-                    fs.unlink(encryptedFilePath, (err) => {});
-                }
-            }
+            let cmd = `/bin/sh -c "echo ${config.password} | openconnect ${config.server} -b -u ${config.username} --passwd-on-stdin"`;
             sudo.exec(cmd, options, function(error, stdout, stderr){
                 if (error) {
                     console.error(error);
@@ -31,24 +23,34 @@ function connectionListener(){
                   console.log('stdout:', stdout);
                   console.log('stderr:', stderr);
             });
-
-            return new Promise((resolve, reject) => {
-                const interfaces = os.networkInterfaces();
-                let keys = Object.keys(interfaces);
-                if (keys.includes('tun0')){
-                    data.status = true;
-                    resolve(data);
-                }
+            saveConfig(config);
+            return new Promise((resolve) => {
+                let data = fetchInterfaces();
+                resolve(data);
             });
         } else if (platform === 'win32') {
-            console.log("Not Supported for Windows!")
+            let cmd = `echo | set /p=${config.password}| openconnect ${config.server} -u ${config.username} --passwd-on-stdin`
+            console.log(cmd);
+            sudo.exec(cmd, options, (error, stdout, stderr) => {
+                if (error) {
+                  console.error(`exec error: ${error}`);
+                  return;
+                }
+                console.log(`stdout: ${stdout}`);
+                console.error(`stderr: ${stderr}`);
+            });
+            saveConfig(config);
+            return new Promise((resolve) => {
+                let data = fetchInterfaces();
+                resolve(data)
+            });
         }
     })
 }
 
 function fetchStatus(){
     ipcMain.handle('status', async () => {
-        return new Promise((resolve, reject) => {
+        return new Promise((resolve) => {
             let data = fetchInterfaces();
             resolve(data);
         });
@@ -57,7 +59,7 @@ function fetchStatus(){
 
 function fetchConfig(){
     ipcMain.handle('fetch', async () => {
-        return new Promise((resolve, reject) => {
+        return new Promise((resolve) => {
             let config = readAndDecryptFormData();
             config['response'] = true;
             if(Object.keys(config).length === 0){
@@ -76,8 +78,8 @@ function killProcess(){
 }
 
 module.exports = {
-    killProcess,
     connectionListener,
     fetchConfig,
-    fetchStatus
+    fetchStatus,
+    killProcess
 }
