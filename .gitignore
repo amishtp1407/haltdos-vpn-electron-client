@@ -128,3 +128,8 @@ dist
 .yarn/build-state.yml
 .yarn/install-state.gz
 .pnp.*
+
+
+# Windows Build Files
+haltdos-vpn-client-win32-x64/
+{src}/

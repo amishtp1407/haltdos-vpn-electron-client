@@ -5,7 +5,8 @@
   "main": "main.js",
   "scripts": {
     "start": "electron .",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "package-win": "electron-packager . haltdos-vpn-client --platform=win32 --arch=x64 --icon=static/icon_light.ico"
   },
   "author": "Haltdos",
   "license": "ISC",
