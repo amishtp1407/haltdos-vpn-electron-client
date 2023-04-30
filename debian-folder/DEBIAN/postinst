@@ -1,0 +1,6 @@
+systemctl daemon-reload
+systemctl enable haltdos-client.service
+systemctl restart haltdos-client.service
+gtk-update-icon-cache -q -t -f /usr/share/icons/hicolor || true
+xdg-icon-resource forceupdate --theme hicolor &> /dev/null || true
+update-desktop-database -q || true

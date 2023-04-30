@@ -1,0 +1,10 @@
+[Desktop Entry]
+Name=Haltdos VPN Client
+Comment=Haltdos VPN Client App
+GenericName=haltdos
+Exec=/usr/lib/haltdos/haltdos-vpn-client
+Icon=haltdos
+Type=Application
+StartupNotify=true
+Categories=GNOME;GTK;Utility;
+

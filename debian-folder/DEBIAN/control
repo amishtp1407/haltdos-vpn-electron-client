@@ -1,0 +1,8 @@
+Package: haltdos-vpn-client
+Version: 2.0
+Architecture: amd64
+Maintainer: Haltdos <info@haltdos.com>
+Depends: openconnect
+Section: utils
+Priority: optional
+Description: Haltdos VPN Client is a powerful and user-friendly VPN client that provides secure and easy-to-use remote access to haltdos network. It supports the Cisco AnyConnect SSL VPN protocol .This app includes a graphical user interface (GUI) that allows users to connect to a VPN server, enter their login credentials, and start using the VPN. The app also provides advanced features such as it allow us to save the login configuration.
