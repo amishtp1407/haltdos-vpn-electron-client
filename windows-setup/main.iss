@@ -20,7 +20,7 @@ AppUpdatesURL={#MyAppURL}
 DefaultDirName={autopf}\{#MyAppName}
 ChangesAssociations=yes
 DisableProgramGroupPage=yes
-OutputDir=executable
+OutputDir=installer
 OutputBaseFilename=haltdos-vpn-client
 Compression=lzma
 SolidCompression=yes
@@ -34,10 +34,10 @@ Name: "english"; MessagesFile: "compiler:Default.isl"
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
 
 [Files]
-Source: "haltdos-vpn-client-win32-x64\**"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs 
-Source: "openconnect\**"; DestDir: "{app}\openconnect"; Flags: uninsneveruninstall onlyifdoesntexist nocompression
-Source: "drivers\vcredist_x86.exe"; DestDir: "{tmp}"; Flags: deleteafterinstall
-Source: "drivers\tap-windows.exe"; DestDir: "{tmp}"; Flags: deleteafterinstall
+Source: "..\build\haltdos-vpn-client-win32-x64\**"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs 
+Source: "resources\openconnect\**"; DestDir: "{app}\openconnect"; Flags: uninsneveruninstall onlyifdoesntexist nocompression
+Source: "resources\vcredist_x86.exe"; DestDir: "{tmp}"; Flags: deleteafterinstall
+Source: "resources\tap-windows.exe"; DestDir: "{tmp}"; Flags: deleteafterinstall
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Registry]

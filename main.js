@@ -11,14 +11,14 @@ const loadMainWindow = () => {
         height: 525,
         resizable:false,
         title: 'Haltdos VPN Client',
-        icon: __dirname + '/static/icon_light.png',
+        icon: __dirname + '/static/assets/img/icon_light.png',
         webPreferences: {
             nodeIntegration: true,
             preload: path.join(__dirname, 'modules/preload.js')
         }
     });
-    mainWindow.loadFile(path.join(__dirname, "index.html"));
-    mainWindow.setMenuBarVisibility(false);
+    mainWindow.loadFile(path.join(__dirname, "static/index.html"));
+    mainWindow.setMenuBarVisibility(true);
     app.setAppUserModelId(process.execPath)
 }
 
@@ -31,7 +31,7 @@ app.on("ready",  () => {
     mainWindow.on('minimize', function (event) {
         event.preventDefault();
         mainWindow.hide();
-        tray = new Tray(__dirname + '/static/icon_light.png');
+        tray = new Tray(__dirname + '/static/assets/img/icon_light.png');
         tray.setToolTip('Haltdos VPN Client');
         tray.setContextMenu(contextMenu);
     })
@@ -46,7 +46,7 @@ app.on("ready",  () => {
             event.preventDefault()
         }
         mainWindow.hide()
-        tray = new Tray(__dirname + '/static/icon_light.png')
+        tray = new Tray(__dirname + '/static/assets/img/icon_light.png')
         tray.setToolTip('Haltdos VPN Client')
         tray.setContextMenu(contextMenu)
     })
