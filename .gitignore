@@ -132,4 +132,4 @@ dist
 
 # Windows Build Files
 haltdos-vpn-client-win32-x64/
-{src}/
+executable/
